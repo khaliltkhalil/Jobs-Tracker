@@ -35,7 +35,7 @@ import axios from "axios";
 const AppContext = createContext();
 
 
-const URL = 'http://localhost:5000/api/v1'
+const URL = 'https://jobs-tracker-api.herokuapp.com/api/v1'
 
 
 const token = localStorage.getItem('token')
