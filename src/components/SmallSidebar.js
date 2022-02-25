@@ -3,7 +3,6 @@ import { FaTimes } from 'react-icons/fa'
 import { useAppContext } from "../context/appContext"
 import links from '../utils/links'
 import Logo from '../components/Logo'
-import { NavLink } from 'react-router-dom'
 import NavLinks from "./NavLinks"
 
 

@@ -26,6 +26,10 @@ import {
     EDIT_JOB_ERROR,
     EDIT_JOB_BEGIN,
     EDIT_JOB_SUCCESS,
+    SHOW_STATS_BEGIN,
+    SHOW_STATS_SUCCESS,
+    CLEAR_FILTERS,
+    CHANGE_PAGE
 } from "./actions"
 import axios from "axios";
 const AppContext = createContext();
@@ -60,6 +64,13 @@ const initialState = {
     totalJobs: 0,
     numOfPages: 1,
     page: 1,
+    stats: {},
+    monthlyApplications: [],
+    search: '',
+    searchStatus: 'all',
+    searchType: 'all',
+    sort: 'latest',
+    sortOptions: ['latest', 'oldest', 'a-z', 'z-a']
 }
 
 
@@ -183,7 +194,7 @@ const AppProvider = ({ children }) => {
             addUserToLocalStorage({ user, token, location })
 
         } catch (error) {
-            if (error.response.status != 401) {
+            if (error.response.status !== 401) {
                 dispatch({
                     type: UPDATE_USER_ERROR,
                     payload: { msg: error.response.data.msg }
@@ -241,7 +252,11 @@ const AppProvider = ({ children }) => {
     }
 
     const getJobs = async () => {
-        let URL = `/jobs`
+        const { search, searchStatus, searchType, sort, page} = state
+        let URL = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}&page=${page}`
+        if(search) {
+            URL = URL + `&search=${search}`
+        }
         dispatch({ type: GET_JOBS_BEGIN })
         try {
             const { data } = await autoFetch.get(URL)
@@ -255,8 +270,8 @@ const AppProvider = ({ children }) => {
                 }
             })
         } catch (error) {
-            console.log(error.response)
-            // logoutUser()
+            //console.log(error.response)
+            logoutUser()
         }
         clearAlert()
     }
@@ -299,17 +314,42 @@ const AppProvider = ({ children }) => {
                 status
             })
             dispatch({ type: EDIT_JOB_SUCCESS })
-            dispatch({type: CLEAR_VALUES})
+            dispatch({ type: CLEAR_VALUES })
 
 
         } catch (error) {
-            if(error.response.data.status === 401) return
+            if (error.response.data.status === 401) return
             dispatch({
-                type: EDIT_JOB_ERROR, 
-                payload: {msg: error.response.data.msg }
+                type: EDIT_JOB_ERROR,
+                payload: { msg: error.response.data.msg }
             })
         }
         clearAlert()
+    }
+
+    const showStats = async () => {
+        dispatch({ type: SHOW_STATS_BEGIN })
+        try {
+            const { data } = await autoFetch.get('/jobs/stats')
+
+            dispatch({
+                type: SHOW_STATS_SUCCESS,
+                payload: {
+                    stats: data.defaultStats,
+                    monthlyApplications: data.monthlyApplications
+                }
+            })
+
+        } catch (error) {
+            //console.log(error.response)
+            logoutUser()
+        }
+    }
+    const clearFilter = () => {
+       dispatch({type: CLEAR_FILTERS})
+    }
+    const changePage = (pageNumber) => {
+        dispatch({type: CHANGE_PAGE, payload: { page: pageNumber}})
     }
 
     return (
@@ -328,7 +368,10 @@ const AppProvider = ({ children }) => {
                 getJobs,
                 setEditJob,
                 deleteJob,
-                editJob
+                editJob,
+                showStats,
+                clearFilter,
+                changePage
 
             }}>
             {children}

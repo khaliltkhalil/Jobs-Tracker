@@ -1,7 +1,7 @@
 import { useAppContext } from "../context/appContext";
 
 const Alert = () => {
-    const { alertType, alertText, clearAlert } = useAppContext()
+    const { alertType, alertText } = useAppContext()
     
   return (
       

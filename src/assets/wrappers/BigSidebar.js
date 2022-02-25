@@ -18,7 +18,7 @@ const Wrapper = styled.aside`
       top: 0;
     }
     .show-sidebar {
-      margin-left: 0;
+      margin-left: 0px;
     }
     header {
       height: 6rem;
