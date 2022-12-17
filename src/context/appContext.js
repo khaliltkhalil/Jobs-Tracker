@@ -34,7 +34,7 @@ import {
 import axios from "axios";
 const AppContext = createContext();
 
-const URL = "https://celebrated-sopapillas-ba55a9.netlify.app/api/v1";
+const URL = "https://jobs-tracker-api.onrender.com//api/v1";
 
 const token = localStorage.getItem("token");
 const user = localStorage.getItem("user");
